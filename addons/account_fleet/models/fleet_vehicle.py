@@ -7,6 +7,12 @@ from odoo import Command, models, fields
 class FleetVehicle(models.Model):
     _inherit = 'fleet.vehicle'
 
+    default_purchase_tax_id = fields.Many2one(
+        'account.tax',
+        string="Default Purchase Tax",
+        domain="[('type_tax_use', 'in', ('purchase', 'none')), ('company_id', '=', company_id)]",
+        check_company=True,
+    )
     bill_count = fields.Integer(compute='_compute_move_ids', string="Bills Count")
     account_move_ids = fields.One2many('account.move', compute='_compute_move_ids')
 
