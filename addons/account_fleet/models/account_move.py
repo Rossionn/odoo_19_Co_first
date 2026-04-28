@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 
 
 class AccountMove(models.Model):
@@ -37,6 +37,18 @@ class AccountMoveLine(models.Model):
     need_vehicle = fields.Boolean(compute='_compute_need_vehicle')
     vehicle_log_service_ids = fields.One2many(export_string_translation=False,
         comodel_name='fleet.vehicle.log.services', inverse_name='account_move_line_id')  # One2one
+
+    @api.onchange('vehicle_id')
+    def _onchange_vehicle_id_set_default_purchase_tax(self):
+        for line in self:
+            if not line.vehicle_id or not line.move_id.is_purchase_document(include_receipts=True):
+                continue
+            tax = line.vehicle_id.default_purchase_tax_id
+            if not tax:
+                continue
+            if line.move_id.fiscal_position_id:
+                tax = line.move_id.fiscal_position_id.map_tax(tax, line.product_id, line.partner_id)
+            line.tax_ids = tax
 
     def _compute_need_vehicle(self):
         self.need_vehicle = False
