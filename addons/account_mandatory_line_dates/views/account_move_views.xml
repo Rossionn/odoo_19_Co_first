@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_mandatory_line_dates" model="ir.ui.view">
+        <field name="name">account.move.form.mandatory.line.dates</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='account_id']" position="after">
+                <field name="service_date_start" optional="show"/>
+                <field name="service_date_end" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
